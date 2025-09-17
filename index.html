@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        /* Basic Styling */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Container for the app */
+        .container {
+            background: #fff;
+            padding: 25px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Input and Button Row */
+        .input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        #taskInput {
+            flex-grow: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #taskInput:focus {
+            border-color: #5b95d6;
+        }
+
+        #addButton {
+            padding: 10px 20px;
+            background-color: #5b95d6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        #addButton:hover {
+            background-color: #4a7db1;
+        }
+
+        /* Task List Styling */
+        #taskList {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #taskList li {
+            padding: 12px 10px 12px 40px; /* Add padding for custom checkbox */
+            background: #f9f9f9;
+            font-size: 16px;
+            border-bottom: 1px solid #ddd;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            user-select: none; /* Prevent text selection on click */
+        }
+
+        #taskList li:last-child {
+            border-bottom: none;
+        }
+        
+        #taskList li:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Style for completed tasks */
+        #taskList li.checked {
+            background: #e9e9e9;
+            color: #888;
+            text-decoration: line-through;
+        }
+
+        /* Custom checkbox for completed tasks */
+        #taskList li.checked::before {
+            content: '';
+            position: absolute;
+            border-color: #fff;
+            border-style: solid;
+            border-width: 0 2px 2px 0;
+            top: 10px;
+            left: 16px;
+            transform: rotate(45deg);
+            height: 15px;
+            width: 7px;
+        }
+
+        /* Delete Button ('x') */
+        .delete-btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            padding: 12px 16px;
+            color: #afafaf;
+            transition: color 0.3s;
+        }
+
+        .delete-btn:hover {
+            color: #f44336; /* Red color on hover */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>My To-Do List 📝</h1>
+        <div class="input-row">
+            <input type="text" id="taskInput" placeholder="Add a new task...">
+            <button id="addButton">Add</button>
+        </div>
+        <ul id="taskList">
+            </ul>
+    </div>
+
+    <script>
+        // Get references to the HTML elements
+        const taskInput = document.getElementById('taskInput');
+        const addButton = document.getElementById('addButton');
+        const taskList = document.getElementById('taskList');
+
+        // --- Event Listeners ---
+
+        // Add a new task when the "Add" button is clicked
+        addButton.addEventListener('click', addTask);
+
+        // Add a new task when the "Enter" key is pressed in the input field
+        taskInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                addTask();
+            }
+        });
+
+        // Listen for clicks on the task list (for completing or deleting tasks)
+        taskList.addEventListener('click', handleTaskClick);
+
+
+        // --- Functions ---
+
+        /**
+         * Adds a new task to the list.
+         */
+        function addTask() {
+            const taskText = taskInput.value.trim(); // Get text and remove whitespace
+
+            // Don't add an empty task
+            if (taskText === '') {
+                alert("Please enter a task!");
+                return;
+            }
+
+            // 1. Create a new list item element     (<li>)
+            const li = document.createElement('li');
+            li.textContent = taskText;
+
+            // 2. Create the delete button     (<span>)
+            const deleteBtn = document.createElement('span');
+            deleteBtn.textContent = '\u00D7'; // This is the '×' character
+            deleteBtn.className = 'delete-btn';
+
+            // 3. Append the delete button to the list item
+            li.appendChild(deleteBtn);
+
+            // 4. Append the new list item to the task list (<ul>)
+            taskList.appendChild(li);
+
+            // 5. Clear the input field for the next task
+            taskInput.value = '';
+        }
+
+        /**
+         * Handles clicks within the task list to either mark a task as complete or delete it.
+         * @param {Event} event - The click event object.
+         */
+        function handleTaskClick(event) {
+            const clickedElement = event.target;
+
+            // Check if the delete button was clicked
+            if (clickedElement.classList.contains('delete-btn')) {
+                // Get the parent <li> and remove it
+                const taskItem = clickedElement.parentElement;
+                taskList.removeChild(taskItem);
+            }
+            // Check if a list item (but not the delete button) was clicked
+            else if (clickedElement.tagName === 'LI') {
+                // Toggle the 'checked' class to mark as complete/incomplete
+                clickedElement.classList.toggle('checked');
+            }
+        }
+    </script>
+
+</body>
+</html>
